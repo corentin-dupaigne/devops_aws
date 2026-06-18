@@ -1,0 +1,56 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: pomodoro-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpass}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-pomodoro}
+      MYSQL_USER: ${MYSQL_USER:-pomodoro}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-pomodoro}
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:-rootpass}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - pomodoro-net
+
+  backend:
+    build: ./backend
+    container_name: pomodoro-backend
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: ${MYSQL_DATABASE:-pomodoro}
+      DB_USER: ${MYSQL_USER:-pomodoro}
+      DB_PASSWORD: ${MYSQL_PASSWORD:-pomodoro}
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+    networks:
+      - pomodoro-net
+
+  frontend:
+    build: ./frontend
+    container_name: pomodoro-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "8088:80"
+    networks:
+      - pomodoro-net
+
+volumes:
+  db_data:
+
+networks:
+  pomodoro-net:
+    driver: bridge

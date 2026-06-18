@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pomodoro</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="app">
+        <h1>🍅 Pomodoro</h1>
+
+        <div class="modes">
+            <button class="mode active" data-mode="work" data-minutes="25">Focus</button>
+            <button class="mode" data-mode="short_break" data-minutes="5">Short Break</button>
+            <button class="mode" data-mode="long_break" data-minutes="15">Long Break</button>
+        </div>
+
+        <div class="timer" id="timer">25:00</div>
+
+        <div class="controls">
+            <button id="startBtn" class="primary">Start</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+
+        <p class="status" id="status">Ready to focus.</p>
+
+        <section class="stats">
+            <h2>Stats</h2>
+            <div class="stat-grid">
+                <div class="stat-card">
+                    <span class="stat-value" id="todaySessions">–</span>
+                    <span class="stat-label">Focus today</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="todayTime">–</span>
+                    <span class="stat-label">Time today</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="totalSessions">–</span>
+                    <span class="stat-label">Total focus</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="totalTime">–</span>
+                    <span class="stat-label">Total time</span>
+                </div>
+            </div>
+
+            <h3>Last 7 days</h3>
+            <div class="chart" id="chart"></div>
+        </section>
+    </main>
+
+    <audio id="ding" preload="auto"
+           src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQ=="></audio>
+
+    <script src="app.js"></script>
+</body>
+</html>
