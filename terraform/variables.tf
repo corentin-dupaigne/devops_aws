@@ -42,3 +42,15 @@ variable "db_multi_az" {
   type        = bool
   default     = false
 }
+
+variable "instance_type" {
+  description = "EC2 instance type for frontend and backend."
+  type        = string
+  default     = "t3.micro"
+}
+
+variable "key_name" {
+  description = "Existing EC2 key pair name for SSH (Learner Lab provides 'vockey')."
+  type        = string
+  default     = "vockey"
+}
