@@ -1,0 +1,11 @@
+---
+# Connection: Learner Lab provides the 'vockey' key pair (labsuser.pem).
+ansible_user: ec2-user
+ansible_ssh_private_key_file: "~/.ssh/labsuser.pem"
+
+# Image tag pushed to ECR (see scripts/build-and-push.sh).
+image_tag: latest
+
+# Container names.
+frontend_container: pomodoro-frontend
+backend_container: pomodoro-backend

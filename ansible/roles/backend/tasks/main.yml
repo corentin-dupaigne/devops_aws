@@ -1,0 +1,75 @@
+---
+# Deploy the backend: pull DB secrets from SSM, load the schema, run the container.
+
+- name: Fetch DB connection parameters from SSM (via instance profile)
+  ansible.builtin.command: >
+    aws ssm get-parameters-by-path
+    --path {{ db_ssm_prefix }}
+    --with-decryption
+    --region {{ aws_region }}
+    --output json
+  register: ssm_raw
+  changed_when: false
+  no_log: true
+
+- name: Build the DB params map (short name -> value)
+  ansible.builtin.set_fact:
+    db_params: >-
+      {{ db_params | default({}) | combine({ (item.Name | basename): item.Value }) }}
+  loop: "{{ (ssm_raw.stdout | from_json).Parameters }}"
+  loop_control:
+    label: "{{ item.Name | basename }}"
+  no_log: true
+
+- name: Install MySQL client (to load the schema)
+  ansible.builtin.dnf:
+    name: mariadb105
+    state: present
+
+- name: Copy the database schema
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../db/init.sql"
+    dest: /tmp/init.sql
+    mode: "0644"
+
+- name: Load the schema into RDS (idempotent — CREATE TABLE IF NOT EXISTS)
+  ansible.builtin.shell: >
+    mysql -h {{ db_params.host }} -P {{ db_params.port }}
+    -u {{ db_params.user }} {{ db_params.name }} < /tmp/init.sql
+  environment:
+    MYSQL_PWD: "{{ db_params.password }}"
+  changed_when: false
+  no_log: true
+
+- name: Create app directory
+  ansible.builtin.file:
+    path: /opt/pomodoro
+    state: directory
+    mode: "0750"
+
+# Env file (not the shell) avoids any quoting issue with the generated password.
+- name: Write backend environment file
+  ansible.builtin.template:
+    src: backend.env.j2
+    dest: /opt/pomodoro/backend.env
+    mode: "0600"
+  no_log: true
+
+- name: Remove any previous backend container
+  ansible.builtin.command: docker rm -f {{ backend_container }}
+  changed_when: false
+  failed_when: false
+
+- name: Pull the backend image
+  ansible.builtin.command: docker pull {{ ecr_backend }}:{{ image_tag }}
+  changed_when: true
+
+- name: Run the backend container
+  ansible.builtin.command: >
+    docker run -d
+    --name {{ backend_container }}
+    --restart unless-stopped
+    -p 5000:5000
+    --env-file /opt/pomodoro/backend.env
+    {{ ecr_backend }}:{{ image_tag }}
+  changed_when: true

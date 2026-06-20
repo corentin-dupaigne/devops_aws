@@ -1,0 +1,19 @@
+# Static inventory (two static EC2 instances).
+# Generate the real inventory.ini from Terraform outputs:
+#     ./generate-inventory.sh
+# (inventory.ini is gitignored because IPs change on every apply.)
+
+[frontend]
+frontend_node ansible_host=FRONTEND_PUBLIC_IP
+
+[backend]
+backend_node ansible_host=BACKEND_PUBLIC_IP
+
+[all:vars]
+project=pomodoro
+aws_region=us-east-1
+ecr_registry=ACCOUNT.dkr.ecr.us-east-1.amazonaws.com
+ecr_frontend=ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/pomodoro/frontend
+ecr_backend=ACCOUNT.dkr.ecr.us-east-1.amazonaws.com/pomodoro/backend
+backend_private_ip=10.0.1.231
+db_ssm_prefix=/pomodoro/db

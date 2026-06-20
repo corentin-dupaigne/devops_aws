@@ -1,0 +1,17 @@
+---
+# Full deployment playbook.
+# Backend first (so the API is up), then frontend (Nginx proxies to it).
+
+- name: Configure and deploy backend
+  hosts: backend
+  become: true
+  roles:
+    - common
+    - backend
+
+- name: Configure and deploy frontend
+  hosts: frontend
+  become: true
+  roles:
+    - common
+    - frontend

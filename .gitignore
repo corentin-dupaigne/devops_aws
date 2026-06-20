@@ -57,4 +57,8 @@ terraform.rc
 *_rsa
 *_ed25519
 
+# Ansible (inventory is generated from Terraform outputs; IPs change each apply)
+ansible/inventory.ini
+*.retry
+
 .claude

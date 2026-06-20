@@ -1,0 +1,51 @@
+---
+# Base configuration shared by both hosts: packages, Docker, ECR login.
+
+- name: Install base packages (Docker, unzip)
+  ansible.builtin.dnf:
+    name:
+      - docker
+      - unzip
+    state: present
+
+- name: Ensure Docker is running and enabled
+  ansible.builtin.systemd:
+    name: docker
+    state: started
+    enabled: true
+
+# Amazon Linux 2023 ships the AWS CLI v2, but guard against it being absent.
+- name: Check for the AWS CLI
+  ansible.builtin.command: aws --version
+  register: aws_cli_check
+  changed_when: false
+  failed_when: false
+
+- name: Install AWS CLI v2 if missing
+  when: aws_cli_check.rc != 0
+  block:
+    - name: Download AWS CLI v2
+      ansible.builtin.get_url:
+        url: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+        dest: /tmp/awscliv2.zip
+        mode: "0644"
+
+    - name: Unpack AWS CLI v2
+      ansible.builtin.unarchive:
+        src: /tmp/awscliv2.zip
+        dest: /tmp
+        remote_src: true
+
+    - name: Install AWS CLI v2
+      ansible.builtin.command: /tmp/aws/install
+      changed_when: true
+
+# Authenticate Docker against ECR using the instance profile (no static creds).
+- name: Log Docker in to ECR
+  ansible.builtin.shell: >
+    set -o pipefail;
+    aws ecr get-login-password --region {{ aws_region }}
+    | docker login --username AWS --password-stdin {{ ecr_registry }}
+  args:
+    executable: /bin/bash
+  changed_when: false
