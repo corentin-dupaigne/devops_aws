@@ -36,4 +36,25 @@ Thumbs.db
 *.log
 logs/
 
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+*.tfvars
+!*.tfvars.example
+
+# SSH keys
+*.pem
+*_rsa
+*_ed25519
+
 .claude
