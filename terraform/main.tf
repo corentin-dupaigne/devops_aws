@@ -31,3 +31,15 @@ module "compute" {
   instance_type              = var.instance_type
   key_name                   = var.key_name
 }
+
+module "observability" {
+  source = "./modules/observability"
+
+  project                 = var.project
+  alb_arn_suffix          = module.compute.alb_arn_suffix
+  target_group_arn_suffix = module.compute.target_group_arn_suffix
+  frontend_instance_id    = module.compute.frontend_instance_id
+  backend_instance_id     = module.compute.backend_instance_id
+  db_instance_id          = module.data.db_instance_id
+  alert_email             = var.alert_email
+}

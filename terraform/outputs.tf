@@ -52,3 +52,13 @@ output "ecr_repository_urls" {
   description = "ECR repository URLs for the frontend and backend images."
   value       = module.compute.ecr_repository_urls
 }
+
+output "dashboard_name" {
+  description = "CloudWatch dashboard name."
+  value       = module.observability.dashboard_name
+}
+
+output "log_group_names" {
+  description = "Container log group names."
+  value       = module.observability.log_group_names
+}

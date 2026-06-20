@@ -54,3 +54,9 @@ variable "key_name" {
   type        = string
   default     = "vockey"
 }
+
+variable "alert_email" {
+  description = "Optional email for SNS alarm notifications. Empty = no subscription."
+  type        = string
+  default     = ""
+}

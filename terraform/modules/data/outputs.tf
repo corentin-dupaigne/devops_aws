@@ -12,3 +12,8 @@ output "ssm_prefix" {
   description = "SSM Parameter Store prefix holding the DB connection details."
   value       = local.ssm_prefix
 }
+
+output "db_instance_id" {
+  description = "RDS instance identifier (for CloudWatch dimensions)."
+  value       = aws_db_instance.this.identifier
+}
