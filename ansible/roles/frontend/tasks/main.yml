@@ -30,5 +30,9 @@
     --restart unless-stopped
     -p 80:80
     -v /opt/pomodoro/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    --log-driver=awslogs
+    --log-opt awslogs-region={{ aws_region }}
+    --log-opt awslogs-group=/{{ project }}/frontend
+    --log-opt awslogs-stream={{ frontend_container }}
     {{ ecr_frontend }}:{{ image_tag }}
   changed_when: true

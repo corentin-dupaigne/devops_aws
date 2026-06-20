@@ -71,5 +71,9 @@
     --restart unless-stopped
     -p 5000:5000
     --env-file /opt/pomodoro/backend.env
+    --log-driver=awslogs
+    --log-opt awslogs-region={{ aws_region }}
+    --log-opt awslogs-group=/{{ project }}/backend
+    --log-opt awslogs-stream={{ backend_container }}
     {{ ecr_backend }}:{{ image_tag }}
   changed_when: true
