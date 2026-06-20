@@ -9,3 +9,12 @@ module "network" {
   az_count   = var.az_count
   admin_cidr = var.admin_cidr
 }
+
+module "data" {
+  source = "./modules/data"
+
+  project              = var.project
+  private_subnet_ids   = module.network.private_subnet_ids
+  db_security_group_id = module.network.security_group_ids.db
+  multi_az             = var.db_multi_az
+}

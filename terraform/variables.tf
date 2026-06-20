@@ -36,3 +36,9 @@ variable "admin_cidr" {
     error_message = "admin_cidr must be a valid CIDR, e.g. 203.0.113.4/32."
   }
 }
+
+variable "db_multi_az" {
+  description = "Enable RDS Multi-AZ. Kept false for the lab; flip to true for real resilience."
+  type        = bool
+  default     = false
+}

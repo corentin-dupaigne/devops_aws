@@ -11,7 +11,4 @@ terraform {
       version = "~> 3.0"
     }
   }
-
-  # Local state (solo project, applied from the laptop with fresh Learner Lab creds).
-  # For teamwork: switch to an S3 backend + DynamoDB lock.
 }

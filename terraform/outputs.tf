@@ -17,3 +17,13 @@ output "security_group_ids" {
   description = "Chained security group IDs (alb / front / back / db)."
   value       = module.network.security_group_ids
 }
+
+output "db_endpoint" {
+  description = "RDS endpoint hostname."
+  value       = module.data.db_endpoint
+}
+
+output "db_ssm_prefix" {
+  description = "SSM Parameter Store prefix holding the DB connection details."
+  value       = module.data.ssm_prefix
+}
